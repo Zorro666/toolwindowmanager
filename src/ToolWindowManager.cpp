@@ -208,6 +208,23 @@ void ToolWindowManager::moveToolWindows(QList<QWidget *> toolWindows,
     if(oldWrapper && !wrappersToUpdate.contains(oldWrapper))
       wrappersToUpdate.push_back(oldWrapper);
   }
+  // if we don't have a reference area, we can't use any types that need a reference
+  if(area.area() == NULL && (area.type() == AddTo || area.type() == LeftOf || area.type() == RightOf ||
+                             area.type() == TopOf || area.type() == BottomOf ||
+                             area.type() == LeftWindowSide || area.type() == RightWindowSide ||
+                             area.type() == TopWindowSide || area.type() == BottomWindowSide))
+
+  {
+    // if the last area is available, use that.
+    if(m_lastUsedArea)
+      area = AreaReference(AddTo, m_lastUsedArea);
+    // if we have no tool windows at all, add into empty space
+    else if(m_toolWindows.isEmpty() || m_toolWindows == toolWindows)
+      area = AreaReference(EmptySpace);
+    // otherwise we have to make it a new floating area
+    else
+      area = AreaReference(NewFloatingArea);
+  }
   if(area.type() == LastUsedArea && !m_lastUsedArea)
   {
     ToolWindowManagerArea *foundArea = findChild<ToolWindowManagerArea *>();

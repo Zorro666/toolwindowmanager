@@ -917,7 +917,9 @@ void ToolWindowManager::updateDragPosition()
     {
       continue;
     }
-    if(area->rect().contains(area->mapFromGlobal(pos)))
+    QRect globalAreaRect(area->mapToGlobal(area->rect().topLeft()),
+                         area->mapToGlobal(area->rect().bottomRight()));
+    if(globalAreaRect.contains(pos))
     {
       m_hoverArea = area;
       break;
